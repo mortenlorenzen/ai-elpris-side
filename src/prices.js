@@ -27,8 +27,8 @@ function addDays(date, days) {
   return time.toISOString().slice(0, 10);
 }
 
-// Adressen, der henter priserne for begge prisområder. Vinduet går en dag til hver side, så dagen er med,
-// uanset om API'et læser start og slut i dansk tid eller i UTC. Dagen vælges bagefter ud fra TimeDK.
+// Adressen, der henter priserne for begge prisområder. API'et læser start og slut i dansk tid, og slut er ikke
+// med, så vinduet er dagen før, dagen og dagen efter. Dagen vælges bagefter ud fra TimeDK.
 function pricesUrl(date) {
   const params = new URLSearchParams({
     start: addDays(date, -1),

@@ -5,18 +5,18 @@
 
 # Testdata
 
-Testene henter aldrig fra nettet. De bruger svar i samme form som Energi Data Service giver for datasættet `DayAheadPrices`, men priserne er **syntetiske**. Cloud-miljøet, hvor filerne blev lavet, har ikke adgang til `api.energidataservice.dk`, så formen er lavet ud fra dokumentationen og bør erstattes af gemte svar fra API'et, når det kan lade sig gøre (skøn).
+Testene henter aldrig fra nettet. De bruger svar fra Energi Data Service for datasættet `DayAheadPrices`, gemt uændret med den adresse, siden selv bruger (`pricesUrl` i `src/prices.js`). Svarene er hentet 27. oktober 2026.
 
 | Fil | Indhold |
 |---|---|
-| `dayahead-2026-10-27-syntetisk.json` | Alle kvarterer for DK1 og DK2 fra 26. til 28. oktober 2026 i dansk tid, 576 rækker, nyeste først. Svarer til vinduet, siden henter for 27. oktober |
-| `dayahead-2026-10-25-syntetisk.json` | Kun 25. oktober 2026, hvor sommertiden slutter: 25 timer og 200 rækker, og kl. 2 dansk tid forekommer to gange |
+| `dayahead-2026-10-27.json` | Vinduet, siden henter for 27. oktober: alle kvarterer for DK1 og DK2 fra 26. til 28. oktober 2026 i dansk tid, 576 rækker |
+| `dayahead-2026-10-25.json` | Vinduet for 25. oktober 2026, hvor sommertiden slutter: 24. til 26. oktober, 584 rækker. 25. oktober har 100 kvarterer pr. prisområde, og kl. 2 dansk tid forekommer to gange |
 
-Hver række har felterne `TimeUTC`, `TimeDK`, `PriceArea`, `DayAheadPriceEUR` og `DayAheadPriceDKK`. Priserne er pr. MWh og pr. kvarter. Tiderne er uden tidszone, som i API'et.
+Svaret har felterne `total`, `filters`, `sort`, `limit`, `dataset` og `records`. Hver række har `TimeUTC`, `TimeDK`, `PriceArea`, `DayAheadPriceEUR` og `DayAheadPriceDKK`. Priserne er pr. MWh og pr. kvarter, og tiderne er uden tidszone. API'et læser `start` og `end` som dansk tid, og `end` er ikke med, så vinduet fra dagen før til og med dagen efter giver præcis tre danske døgn.
 
-Filerne har `syntetisk: true` øverst og i navnet. API'et har ikke det felt. Filerne laves med `node tools/lav-testdata.js` og et fast seed, så de bliver ens hver gang. Ret generatoren, ikke filerne.
+Filerne hentes igen med `node tools/hent-testdata.js 2026-10-27 2026-10-25`. Ret ikke filerne i hånden.
 
 ## Kilder
 
 - [Day-Ahead Prices | energidataservice.dk](https://www.energidataservice.dk/tso-electricity/DayAheadPrices)
-- [Metadata for Elspotprices | api.energidataservice.dk](https://api.energidataservice.dk/meta/dataset/Elspotprices), det tidligere datasæt med timepriser til og med 30. september 2025
+- [Svaret for 27. oktober | api.energidataservice.dk](https://api.energidataservice.dk/dataset/DayAheadPrices?start=2026-10-26&end=2026-10-29&filter=%7B%22PriceArea%22%3A%5B%22DK1%22%2C%22DK2%22%5D%7D&sort=TimeUTC+asc&limit=1000)

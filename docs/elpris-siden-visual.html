@@ -184,9 +184,9 @@ footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line-2
 <tr><td data-label="Fil"><code>src/prices.js</code></td><td data-label="Indhold">Beregningen: adressen til API'et, dansk dato, timepriser, moms og tal på dansk. Eksporteres til Node med <code>module.exports</code></td></tr>
 <tr><td data-label="Fil"><code>src/app.js</code></td><td data-label="Indhold">Henter priserne og tegner tabellen</td></tr>
 <tr><td data-label="Fil"><code>src/styles.css</code></td><td data-label="Indhold">Lyst og mørkt tema og tabellen på telefonbredde</td></tr>
-<tr><td data-label="Fil"><code>test/prices.test.js</code></td><td data-label="Indhold">14 tests med <code>node --test</code></td></tr>
-<tr><td data-label="Fil"><code>test/data/</code></td><td data-label="Indhold">Syntetiske svar fra API'et og deres README</td></tr>
-<tr><td data-label="Fil"><code>tools/lav-testdata.js</code></td><td data-label="Indhold">Laver testdata med et fast seed</td></tr>
+<tr><td data-label="Fil"><code>test/prices.test.js</code></td><td data-label="Indhold">16 tests med <code>node --test</code></td></tr>
+<tr><td data-label="Fil"><code>test/data/</code></td><td data-label="Indhold">Gemte svar fra API'et og deres README</td></tr>
+<tr><td data-label="Fil"><code>tools/hent-testdata.js</code></td><td data-label="Indhold">Henter testdata fra API'et</td></tr>
 <tr><td data-label="Fil"><code>docs/</code></td><td data-label="Indhold">Denne beskrivelse og dens Fjord-side</td></tr>
 <tr><td data-label="Fil"><code>.github/workflows/</code></td><td data-label="Indhold">CI med <code>node --test</code> og workflowet, der starter kontorets <code>fletning</code></td></tr>
 </tbody></table></div>
@@ -197,7 +197,7 @@ footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line-2
     <h2>Test og testdata</h2>
     <p class="lede">Testene henter aldrig fra nettet og kører i CI på hver PR med Node 22. De dækker timeprisen som gennemsnit af kvarterer, moms på positive og negative priser, kvarterer uden pris, dagene med sommertid og vintertid, dansk dato omkring midnat, adressen til API'et og tal med komma.</p>
   </div></div>
-<p>Testdata er syntetiske og markeret med <code>syntetisk</code> i navn og indhold. Cloud-miljøet, hvor koden blev skrevet, har ikke adgang til Energi Data Service, så svarene er lavet ud fra dokumentationen. Feltnavnene <code>TimeUTC</code>, <code>TimeDK</code>, <code>PriceArea</code> og <code>DayAheadPriceDKK</code> stemmer med andre projekter, der bruger API'et, men er ikke prøvet mod et rigtigt svar (skøn).</p>
+<p>Testdata er svar fra Energi Data Service for 25. og 27. oktober 2026, gemt uændret med den adresse, siden selv bruger. Feltnavnene <code>TimeUTC</code>, <code>TimeDK</code>, <code>PriceArea</code> og <code>DayAheadPriceDKK</code> er dermed prøvet mod et rigtigt svar, og en test tjekker felterne i hver række.</p>
 </section>
 <section id="status-og-næste-skridt">
   <div class="sec-head"><div class="numeral">5</div><div>
@@ -206,11 +206,11 @@ footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line-2
   </div></div>
 <div class="table-wrap"><table class="stack">
 <thead><tr><th>Krav</th><th>Status</th></tr></thead><tbody>
-<tr><td data-label="Krav">Dagens priser for DK1 og DK2</td><td data-label="Status">Lavet, ikke prøvet mod det rigtige API</td></tr>
+<tr><td data-label="Krav">Dagens priser for DK1 og DK2</td><td data-label="Status">Lavet og prøvet mod gemte svar fra API'et</td></tr>
 <tr><td data-label="Krav">Med og uden moms</td><td data-label="Status">Lavet</td></tr>
 <tr><td data-label="Krav">De billigste timer markeret</td><td data-label="Status">Mangler</td></tr>
 <tr><td data-label="Krav">Morgendagens priser, når de er offentliggjort</td><td data-label="Status">Mangler</td></tr>
-<tr><td data-label="Krav">Test i CI</td><td data-label="Status">Lavet, 14 tests</td></tr>
+<tr><td data-label="Krav">Test i CI</td><td data-label="Status">Lavet, 16 tests</td></tr>
 </tbody></table></div>
 <p>Reviewet af skelettet pegede også på, at siden ikke henter igen efter midnat, og at hentningen ikke har en tidsgrænse.</p>
 </section>
