@@ -12,7 +12,7 @@ function showPrices(date, data) {
     showStatus("Priserne er ikke hentet. Åbn siden på GitHub Pages, eller kør node tools/hent-priser.js i en lokal kopi.", true);
     return;
   }
-  const fetched = data.fetchedAt ? ` Hentet kl. ${danishTime(data.fetchedAt)}.` : "";
+  const fetched = data.fetchedAt ? ` ${fetchedText(data.fetchedAt, date)}` : "";
   const rows = priceTable(data.records, date);
   if (rows.length === 0) {
     showStatus(`Der er ingen priser for ${formatDate(date)} endnu.${fetched}`);
@@ -20,6 +20,12 @@ function showPrices(date, data) {
   }
   renderTable(rows, date);
   showStatus(fetched.trim());
+}
+
+// "Hentet kl. 16.07." eller med datoen, hvis priserne er hentet en anden dag, fx fordi workflowet er stoppet.
+function fetchedText(fetchedAt, date) {
+  const day = danishDate(new Date(fetchedAt));
+  return day === date ? `Hentet kl. ${danishTime(fetchedAt)}.` : `Hentet ${formatDate(day)} kl. ${danishTime(fetchedAt)}.`;
 }
 
 function renderTable(rows, date) {
