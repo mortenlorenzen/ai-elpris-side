@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Elpriser i dag</title>
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+  <main>
+    <h1>Elpriser i dag</h1>
+    <p>Spotprisen time for time i kr. pr. kWh for Vestdanmark (DK1) og Østdanmark (DK2). Timeprisen er gennemsnittet af timens fire kvarterer. Nettarif, elafgift og elselskabets tillæg er ikke med.</p>
+    <p id="status" class="status" role="status">Henter priser …</p>
+
+    <section id="result" hidden>
+      <h2 id="date"></h2>
+      <div class="scroll">
+        <table id="prices">
+          <thead>
+            <tr>
+              <th scope="col" rowspan="2">Time</th>
+              <th scope="colgroup" colspan="2">DK1 Vest</th>
+              <th scope="colgroup" colspan="2">DK2 Øst</th>
+            </tr>
+            <tr>
+              <th scope="col">Uden moms</th>
+              <th scope="col">Med moms</th>
+              <th scope="col">Uden moms</th>
+              <th scope="col">Med moms</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="source">Data: <a href="https://www.energidataservice.dk/tso-electricity/DayAheadPrices">Day-ahead-priser fra Energi Data Service</a>, Energinet, CC BY 4.0.</p>
+  </main>
+  <script src="src/prices.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
