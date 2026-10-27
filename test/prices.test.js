@@ -151,4 +151,5 @@ test("timen og prisen skrives på dansk", () => {
   assert.equal(formatKr(1.234), "1,23");
   assert.equal(formatKr(0.5), "0,50");
   assert.equal(formatKr(-0.054), "-0,05");
+  assert.equal(formatKr(-0.004), "0,00");
 });

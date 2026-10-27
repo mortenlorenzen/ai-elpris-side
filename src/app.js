@@ -37,7 +37,7 @@ function renderTable(rows, date) {
         for (const key of ["exVat", "inclVat"]) {
           const td = document.createElement("td");
           td.textContent = row[area] === null ? "–" : formatKr(row[area][key]);
-          if (row[area] !== null && row[area][key] < 0) td.classList.add("negative");
+          if (td.textContent.startsWith("-")) td.classList.add("negative");
           tr.append(td);
         }
       }

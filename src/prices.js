@@ -93,9 +93,10 @@ function hourLabel(hourDk) {
   return `${String(hour).padStart(2, "0")}–${String((hour + 1) % 24).padStart(2, "0")}`;
 }
 
-// En pris i kr. med to decimaler og komma, fx "1,23".
+// En pris i kr. med to decimaler og komma, fx "1,23". En pris, der rundes til nul, skrives uden minus.
 function formatKr(price) {
-  return price.toLocaleString("da-DK", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const rounded = Math.round(price * 100) / 100 || 0;
+  return rounded.toLocaleString("da-DK", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 if (typeof module !== "undefined") {
