@@ -4,4 +4,4 @@ En statisk webside, der viser dagens og morgendagens spotpriser på el time for 
 
 Testene køres med `node --test` (Node 22). Der er ingen afhængigheder og intet byggetrin.
 
-Åbn `index.html` i en browser for at se dagens priser. Logikken ligger i `src/prices.js`, siden i `src/app.js`, og testdata i `test/data/` laves med `node tools/lav-testdata.js`.
+Åbn `index.html` i en browser for at se dagens priser. Logikken ligger i `src/prices.js`, siden i `src/app.js`, og testdata i `test/data/` er gemte svar fra API'et, som hentes med `node tools/hent-testdata.js`.

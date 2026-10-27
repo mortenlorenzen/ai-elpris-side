@@ -40,9 +40,9 @@ Logikken ligger i et almindeligt script, som både browseren og testene kan brug
 | `src/prices.js` | Beregningen: adressen til API'et, dansk dato, timepriser, moms og tal på dansk. Eksporteres til Node med `module.exports` |
 | `src/app.js` | Henter priserne og tegner tabellen |
 | `src/styles.css` | Lyst og mørkt tema og tabellen på telefonbredde |
-| `test/prices.test.js` | 14 tests med `node --test` |
-| `test/data/` | Syntetiske svar fra API'et og deres README |
-| `tools/lav-testdata.js` | Laver testdata med et fast seed |
+| `test/prices.test.js` | 16 tests med `node --test` |
+| `test/data/` | Gemte svar fra API'et og deres README |
+| `tools/hent-testdata.js` | Henter testdata fra API'et |
 | `docs/` | Denne beskrivelse og dens Fjord-side |
 | `.github/workflows/` | CI med `node --test` og workflowet, der starter kontorets `fletning` |
 
@@ -52,7 +52,7 @@ Scriptene er ikke ES-moduler, fordi browsere ikke indlæser moduler fra `file://
 
 Testene henter aldrig fra nettet og kører i CI på hver PR med Node 22. De dækker timeprisen som gennemsnit af kvarterer, moms på positive og negative priser, kvarterer uden pris, dagene med sommertid og vintertid, dansk dato omkring midnat, adressen til API'et og tal med komma.
 
-Testdata er syntetiske og markeret med `syntetisk` i navn og indhold. Cloud-miljøet, hvor koden blev skrevet, har ikke adgang til Energi Data Service, så svarene er lavet ud fra dokumentationen. Feltnavnene `TimeUTC`, `TimeDK`, `PriceArea` og `DayAheadPriceDKK` stemmer med andre projekter, der bruger API'et, men er ikke prøvet mod et rigtigt svar (skøn).
+Testdata er svar fra Energi Data Service for 25. og 27. oktober 2026, gemt uændret med den adresse, siden selv bruger. Feltnavnene `TimeUTC`, `TimeDK`, `PriceArea` og `DayAheadPriceDKK` er dermed prøvet mod et rigtigt svar, og en test tjekker felterne i hver række.
 
 ## 5. Status og næste skridt
 
@@ -60,11 +60,11 @@ Skelettet er flettet som første kodeopgave, `kodeopgave-4`. Projektet er færdi
 
 | Krav | Status |
 |---|---|
-| Dagens priser for DK1 og DK2 | Lavet, ikke prøvet mod det rigtige API |
+| Dagens priser for DK1 og DK2 | Lavet og prøvet mod gemte svar fra API'et |
 | Med og uden moms | Lavet |
 | De billigste timer markeret | Mangler |
 | Morgendagens priser, når de er offentliggjort | Mangler |
-| Test i CI | Lavet, 14 tests |
+| Test i CI | Lavet, 16 tests |
 
 Reviewet af skelettet pegede også på, at siden ikke henter igen efter midnat, og at hentningen ikke har en tidsgrænse.
 

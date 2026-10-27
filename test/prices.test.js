@@ -1,4 +1,4 @@
-// Tests af timepriserne og momsen. Svarene fra API'et er syntetiske og lavet ud fra dokumentationen
+// Tests af timepriserne og momsen. Svarene fra API'et er gemt uændret fra Energi Data Service
 // (se test/data/README.md).
 
 const { test } = require("node:test");
@@ -11,8 +11,8 @@ function load(name) {
   return JSON.parse(readFileSync(join(__dirname, "data", name), "utf8")).records;
 }
 
-const normalDay = load("dayahead-2026-10-27-syntetisk.json");
-const lastSummerDay = load("dayahead-2026-10-25-syntetisk.json");
+const normalDay = load("dayahead-2026-10-27.json");
+const lastSummerDay = load("dayahead-2026-10-25.json");
 
 function quarter(TimeUTC, TimeDK, DayAheadPriceDKK, PriceArea = "DK1") {
   return { TimeUTC, TimeDK, PriceArea, DayAheadPriceEUR: null, DayAheadPriceDKK };
@@ -41,6 +41,24 @@ test("moms er 25 procent, også på negative priser", () => {
   near(withVat(0.8), 1);
   near(withVat(-0.2), -0.25);
   near(withVat(0), 0);
+});
+
+test("hver række i API-svaret har de felter, beregningen bruger", () => {
+  for (const records of [normalDay, lastSummerDay]) {
+    for (const record of records) {
+      assert.deepEqual(Object.keys(record), ["TimeUTC", "TimeDK", "PriceArea", "DayAheadPriceEUR", "DayAheadPriceDKK"]);
+      assert.match(record.TimeUTC, /^\d{4}-\d{2}-\d{2}T\d{2}:(00|15|30|45):00$/);
+      assert.match(record.TimeDK, /^\d{4}-\d{2}-\d{2}T\d{2}:(00|15|30|45):00$/);
+      assert.ok(["DK1", "DK2"].includes(record.PriceArea));
+      assert.ok(Number.isFinite(record.DayAheadPriceDKK));
+    }
+  }
+});
+
+test("timeprisen kl. 0 i DK1 den 27. oktober passer med kvartererne fra API'et", () => {
+  const [hour] = hourlyPrices(normalDay, "DK1", "2026-10-27");
+  assert.equal(hour.hourDk, "00");
+  near(hour.exVat, (201.8169 + 314.460629 + 403.858034 + 414.920582) / 4 / 1000);
 });
 
 test("en almindelig dag har 24 timer med fire kvarterer for begge prisområder", () => {
@@ -104,6 +122,8 @@ test("den dag sommertiden slutter, har 25 timer, og kl. 2 står to gange", () =>
   assert.deepEqual(rows.slice(1, 5).map((row) => row.label), ["01–02", "02–03 sommertid", "02–03 vintertid", "03–04"]);
   assert.equal(rows[2].hourUtc, "2026-10-25T00");
   assert.equal(rows[3].hourUtc, "2026-10-25T01");
+  near(rows[2].DK2.exVat, (29.8992 + 25.78806 + 24.891084 + 25.489068) / 4 / 1000);
+  near(rows[3].DK2.exVat, (22.648644 + 23.470872 + 27.058776 + 25.41432) / 4 / 1000);
   assert.ok(rows.every((row) => row.DK1.quarters === 4 && row.DK2.quarters === 4));
 });
 
