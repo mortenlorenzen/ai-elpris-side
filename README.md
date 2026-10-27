@@ -4,4 +4,4 @@ En statisk webside, der viser dagens og morgendagens spotpriser på el time for 
 
 Testene køres med `node --test` (Node 22). Der er ingen afhængigheder og intet byggetrin.
 
-Åbn `index.html` i en browser for at se dagens priser. Logikken ligger i `src/prices.js`, siden i `src/app.js`, og testdata i `test/data/` er gemte svar fra API'et, som hentes med `node tools/hent-testdata.js`.
+Siden ligger på GitHub Pages, hvor workflowet `pages` henter priserne hver time. Energi Data Service svarer kun browsere fra sine egne domæner, så siden kan ikke selv hente dem. I en lokal kopi køres `node tools/hent-priser.js` først, og derefter åbnes `index.html`. Logikken ligger i `src/prices.js`, siden i `src/app.js`, og testdata i `test/data/` er gemte svar fra API'et, som hentes med `node tools/hent-testdata.js`.

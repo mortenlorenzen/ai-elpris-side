@@ -8,3 +8,6 @@ build/
 .vercel/
 .next/
 *.log
+
+# Laves af tools/hent-priser.js og udgives på GitHub Pages
+data/

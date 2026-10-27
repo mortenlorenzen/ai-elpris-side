@@ -99,6 +99,20 @@ function formatKr(price) {
   return rounded.toLocaleString("da-DK", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// Datafilen data/priser.js, som siden indlæser med et script-tag. API'et svarer kun browsere fra sine egne
+// domæner, så priserne hentes uden for browseren og lægges i en fil, der også kan indlæses fra file://.
+function priceDataScript(records, fetchedAt) {
+  return `window.PRICE_DATA = ${JSON.stringify({ fetchedAt, records })};\n`;
+}
+
+// Klokkeslættet i Danmark som "16.05", fx for hvornår priserne er hentet.
+function danishTime(time) {
+  return new Date(time).toLocaleTimeString("da-DK", { timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit" });
+}
+
 if (typeof module !== "undefined") {
-  module.exports = { API_URL, AREAS, VAT_RATE, danishDate, addDays, pricesUrl, withVat, hourlyPrices, priceTable, hourLabel, formatKr };
+  module.exports = {
+    API_URL, AREAS, VAT_RATE, danishDate, addDays, pricesUrl, withVat, hourlyPrices, priceTable, hourLabel, formatKr,
+    priceDataScript, danishTime,
+  };
 }

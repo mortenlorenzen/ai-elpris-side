@@ -150,7 +150,7 @@ footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line-2
 <header class="masthead">
   <span class="tag">Beskrivelse af repoet ai-elpris-side · 2026-10-27</span>
   <h1>Elpris-siden</h1>
-  <p class="standfirst">Elpris-siden er en statisk webside, der viser dagens spotpriser på el time for time for Vestdanmark (DK1) og Østdanmark (DK2) i kr. pr. kWh, med og uden moms. Priserne hentes i browseren fra Energinets Energi Data Service, og siden kan åbnes direkte fra en lokal kopi uden server, byggetrin eller afhængigheder. Repoet er projektet <code>projekt-elpris-side</code> i softwarekontoret ai-kontor-software, hvor AI-agenter skriver koden, og Morten beskriver opgaverne og fletter. Kort sagt: <em>åbn siden, og se, hvornår strømmen er billig i dag</em>.</p>
+  <p class="standfirst">Elpris-siden er en statisk webside, der viser dagens spotpriser på el time for time for Vestdanmark (DK1) og Østdanmark (DK2) i kr. pr. kWh, med og uden moms. Priserne hentes hver time fra Energinets Energi Data Service af et workflow, som udgiver siden på GitHub Pages. Siden kan også åbnes fra en lokal kopi uden server, byggetrin eller afhængigheder, når priserne er hentet med <code>node tools/hent-priser.js</code>. Repoet er projektet <code>projekt-elpris-side</code> i softwarekontoret ai-kontor-software, hvor AI-agenter skriver koden, og Morten beskriver opgaverne og fletter. Kort sagt: <em>åbn siden, og se, hvornår strømmen er billig i dag</em>.</p>
 </header>
 <section id="hvad-siden-viser">
   <div class="sec-head"><div class="numeral">1</div><div>
@@ -163,14 +163,14 @@ footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line-2
 <tr><td data-label="Kolonne">DK1 Vest, uden og med moms</td><td data-label="Indhold">Spotprisen i Vestdanmark i kr. pr. kWh</td></tr>
 <tr><td data-label="Kolonne">DK2 Øst, uden og med moms</td><td data-label="Indhold">Spotprisen i Østdanmark i kr. pr. kWh</td></tr>
 </tbody></table></div>
-<p>Negative priser står med minus og i grønt. Nettarif, elafgift og elselskabets tillæg er ikke med, så prisen er kun selve elprisen på markedet. Er dagens priser ikke offentliggjort, eller svarer Energi Data Service ikke, står der en besked i stedet for tabellen.</p>
+<p>Negative priser står med minus og i grønt. Nettarif, elafgift og elselskabets tillæg er ikke med, så prisen er kun selve elprisen på markedet. Under overskriften står, hvornår priserne er hentet. Er dagens priser ikke offentliggjort, eller er priserne ikke hentet, står der en besked i stedet for tabellen.</p>
 </section>
 <section id="hvordan-prisen-regnes">
   <div class="sec-head"><div class="numeral">2</div><div>
     <h2>Hvordan prisen regnes</h2>
     <p class="lede">Energi Data Service har siden 1. oktober 2025 givet én pris pr. kvarter i datasættet <code>DayAheadPrices</code>, og siden laver dem om til timepriser i fire trin.</p>
   </div></div>
-<ol><li><strong>Hent.</strong> Siden henter begge prisområder fra dagen før til dagen efter, så dagen er med, uanset om API'et læser datoerne i dansk tid eller UTC.</li><li><strong>Vælg dagen.</strong> Kun kvarterer, hvis <code>TimeDK</code> ligger på dagens dato i Danmark, tæller med.</li><li><strong>Lav timepriser.</strong> Timens pris er gennemsnittet af dens kvarterer, regnet om fra kr. pr. MWh til kr. pr. kWh. Mangler et kvarter, bruges gennemsnittet af resten.</li><li><strong>Læg moms på.</strong> Prisen med moms er prisen uden moms gange 1,25, også når prisen er negativ.</li></ol>
+<ol><li><strong>Hent.</strong> <code>tools/hent-priser.js</code> henter begge prisområder fra dagen før til og med dagen efter i dansk tid og skriver dem til <code>data/priser.js</code>. Browseren må ikke selv hente dem, fordi API'et kun svarer browsere fra <code>energidataservice.dk</code>.</li><li><strong>Vælg dagen.</strong> Kun kvarterer, hvis <code>TimeDK</code> ligger på dagens dato i Danmark, tæller med.</li><li><strong>Lav timepriser.</strong> Timens pris er gennemsnittet af dens kvarterer, regnet om fra kr. pr. MWh til kr. pr. kWh. Mangler et kvarter, bruges gennemsnittet af resten.</li><li><strong>Læg moms på.</strong> Prisen med moms er prisen uden moms gange 1,25, også når prisen er negativ.</li></ol>
 <p>Kvartererne samles efter timen i UTC og ikke i dansk tid. Derfor får den dag, hvor sommertiden slutter, 25 timer, og timen <code>02–03</code> står to gange som sommertid og vintertid. Den dag, sommertiden begynder, har 23 timer.</p>
 </section>
 <section id="filerne-i-repoet">
@@ -182,20 +182,21 @@ footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line-2
 <thead><tr><th>Fil</th><th>Indhold</th></tr></thead><tbody>
 <tr><td data-label="Fil"><code>index.html</code></td><td data-label="Indhold">Siden med tabellen</td></tr>
 <tr><td data-label="Fil"><code>src/prices.js</code></td><td data-label="Indhold">Beregningen: adressen til API'et, dansk dato, timepriser, moms og tal på dansk. Eksporteres til Node med <code>module.exports</code></td></tr>
-<tr><td data-label="Fil"><code>src/app.js</code></td><td data-label="Indhold">Henter priserne og tegner tabellen</td></tr>
+<tr><td data-label="Fil"><code>src/app.js</code></td><td data-label="Indhold">Læser priserne fra <code>data/priser.js</code> og tegner tabellen</td></tr>
 <tr><td data-label="Fil"><code>src/styles.css</code></td><td data-label="Indhold">Lyst og mørkt tema og tabellen på telefonbredde</td></tr>
 <tr><td data-label="Fil"><code>test/prices.test.js</code></td><td data-label="Indhold">16 tests med <code>node --test</code></td></tr>
 <tr><td data-label="Fil"><code>test/data/</code></td><td data-label="Indhold">Gemte svar fra API'et og deres README</td></tr>
+<tr><td data-label="Fil"><code>tools/hent-priser.js</code></td><td data-label="Indhold">Henter priserne til <code>data/priser.js</code>, som ikke committes</td></tr>
 <tr><td data-label="Fil"><code>tools/hent-testdata.js</code></td><td data-label="Indhold">Henter testdata fra API'et</td></tr>
 <tr><td data-label="Fil"><code>docs/</code></td><td data-label="Indhold">Denne beskrivelse og dens Fjord-side</td></tr>
-<tr><td data-label="Fil"><code>.github/workflows/</code></td><td data-label="Indhold">CI med <code>node --test</code> og workflowet, der starter kontorets <code>fletning</code></td></tr>
+<tr><td data-label="Fil"><code>.github/workflows/</code></td><td data-label="Indhold">CI med <code>node --test</code>, workflowet <code>pages</code>, der henter priserne og udgiver siden hver time, og workflowet, der starter kontorets <code>fletning</code></td></tr>
 </tbody></table></div>
 <p>Scriptene er ikke ES-moduler, fordi browsere ikke indlæser moduler fra <code>file://</code>.</p>
 </section>
 <section id="test-og-testdata">
   <div class="sec-head"><div class="numeral">4</div><div>
     <h2>Test og testdata</h2>
-    <p class="lede">Testene henter aldrig fra nettet og kører i CI på hver PR med Node 22. De dækker timeprisen som gennemsnit af kvarterer, moms på positive og negative priser, kvarterer uden pris, dagene med sommertid og vintertid, dansk dato omkring midnat, adressen til API'et og tal med komma.</p>
+    <p class="lede">Testene henter aldrig fra nettet og kører i CI på hver PR med Node 22. De dækker timeprisen som gennemsnit af kvarterer, moms på positive og negative priser, kvarterer uden pris, dagene med sommertid og vintertid, dansk dato omkring midnat, adressen til API'et, datafilen og tal med komma.</p>
   </div></div>
 <p>Testdata er svar fra Energi Data Service for 25. og 27. oktober 2026, gemt uændret med den adresse, siden selv bruger. Feltnavnene <code>TimeUTC</code>, <code>TimeDK</code>, <code>PriceArea</code> og <code>DayAheadPriceDKK</code> er dermed prøvet mod et rigtigt svar, og en test tjekker felterne i hver række.</p>
 </section>
@@ -206,13 +207,13 @@ footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line-2
   </div></div>
 <div class="table-wrap"><table class="stack">
 <thead><tr><th>Krav</th><th>Status</th></tr></thead><tbody>
-<tr><td data-label="Krav">Dagens priser for DK1 og DK2</td><td data-label="Status">Lavet og prøvet mod gemte svar fra API'et</td></tr>
+<tr><td data-label="Krav">Dagens priser for DK1 og DK2</td><td data-label="Status">Lavet og prøvet mod gemte svar fra API'et. Hentes hver time til GitHub Pages</td></tr>
 <tr><td data-label="Krav">Med og uden moms</td><td data-label="Status">Lavet</td></tr>
 <tr><td data-label="Krav">De billigste timer markeret</td><td data-label="Status">Mangler</td></tr>
 <tr><td data-label="Krav">Morgendagens priser, når de er offentliggjort</td><td data-label="Status">Mangler</td></tr>
-<tr><td data-label="Krav">Test i CI</td><td data-label="Status">Lavet, 16 tests</td></tr>
+<tr><td data-label="Krav">Test i CI</td><td data-label="Status">Lavet, 18 tests</td></tr>
 </tbody></table></div>
-<p>Reviewet af skelettet pegede også på, at siden ikke henter igen efter midnat, og at hentningen ikke har en tidsgrænse.</p>
+<p>Reviewet af skelettet pegede også på, at siden ikke viser den nye dag efter midnat, før den genindlæses.</p>
 </section>
 <section id="sådan-arbejdes-der-i-repoet">
   <div class="sec-head"><div class="numeral">6</div><div>

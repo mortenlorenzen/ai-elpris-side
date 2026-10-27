@@ -16,7 +16,7 @@ En statisk webside, der henter dagens og morgendagens spotpriser fra Energinets 
 - HTML, CSS og JavaScript uden byggetrin. Siden kan åbnes direkte fra en lokal kopi.
 - Scriptene er almindelige scripts og ikke ES-moduler, fordi browsere ikke indlæser moduler fra `file://`. Logikken ligger i filer, der også eksporterer til Node med `module.exports`, så testene kan bruge dem.
 - Ingen afhængigheder. Testene skrives med `node --test` og ligger i `test/`, og testdata ligger i `test/data/`.
-- Priserne hentes i browseren fra Energi Data Service, som er offentlig og ikke kræver en nøgle. Testene henter aldrig fra nettet. De bruger gemte svar fra API'et i `test/data/`.
+- Priserne hentes fra Energi Data Service, som er offentlig og ikke kræver en nøgle. API'et svarer kun browsere fra sine egne domæner, så `tools/hent-priser.js` henter dem til `data/priser.js`, som siden indlæser. Workflowet `pages` gør det hver time og udgiver siden på GitHub Pages. Testene henter aldrig fra nettet. De bruger gemte svar fra API'et i `test/data/`.
 - Day-ahead-priserne er opgjort pr. kvarter (skøn), og siden viser timens gennemsnit. Nettarif og elafgift er ikke med.
 - Grafen tegnes som SVG uden et grafbibliotek.
 - Kode og identifikatorer må være på engelsk. Tekst på siden, kommentarer og dokumenter er på dansk.
