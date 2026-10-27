@@ -5,7 +5,7 @@
 
 # Elpris-siden
 
-Elpris-siden er en statisk webside, der viser dagens spotpriser på el time for time for Vestdanmark (DK1) og Østdanmark (DK2) i kr. pr. kWh, med og uden moms. Priserne hentes i browseren fra Energinets Energi Data Service, og siden kan åbnes direkte fra en lokal kopi uden server, byggetrin eller afhængigheder. Repoet er projektet `projekt-elpris-side` i softwarekontoret ai-kontor-software, hvor AI-agenter skriver koden, og Morten beskriver opgaverne og fletter. Kort sagt: *åbn siden, og se, hvornår strømmen er billig i dag*.
+Elpris-siden er en statisk webside, der viser dagens spotpriser på el time for time for Vestdanmark (DK1) og Østdanmark (DK2) i kr. pr. kWh, med og uden moms. Priserne hentes hver time fra Energinets Energi Data Service af et workflow, som udgiver siden på GitHub Pages. Siden kan også åbnes fra en lokal kopi uden server, byggetrin eller afhængigheder, når priserne er hentet med `node tools/hent-priser.js`. Repoet er projektet `projekt-elpris-side` i softwarekontoret ai-kontor-software, hvor AI-agenter skriver koden, og Morten beskriver opgaverne og fletter. Kort sagt: *åbn siden, og se, hvornår strømmen er billig i dag*.
 
 ## 1. Hvad siden viser
 
@@ -17,13 +17,13 @@ Siden viser én tabel med en række pr. time og fire kolonner med priser.
 | DK1 Vest, uden og med moms | Spotprisen i Vestdanmark i kr. pr. kWh |
 | DK2 Øst, uden og med moms | Spotprisen i Østdanmark i kr. pr. kWh |
 
-Negative priser står med minus og i grønt. Nettarif, elafgift og elselskabets tillæg er ikke med, så prisen er kun selve elprisen på markedet. Er dagens priser ikke offentliggjort, eller svarer Energi Data Service ikke, står der en besked i stedet for tabellen.
+Negative priser står med minus og i grønt. Nettarif, elafgift og elselskabets tillæg er ikke med, så prisen er kun selve elprisen på markedet. Under overskriften står, hvornår priserne er hentet. Er dagens priser ikke offentliggjort, eller er priserne ikke hentet, står der en besked i stedet for tabellen.
 
 ## 2. Hvordan prisen regnes
 
 Energi Data Service har siden 1. oktober 2025 givet én pris pr. kvarter i datasættet `DayAheadPrices`, og siden laver dem om til timepriser i fire trin.
 
-1. **Hent.** Siden henter begge prisområder fra dagen før til dagen efter, så dagen er med, uanset om API'et læser datoerne i dansk tid eller UTC.
+1. **Hent.** `tools/hent-priser.js` henter begge prisområder fra dagen før til og med dagen efter i dansk tid og skriver dem til `data/priser.js`. Browseren må ikke selv hente dem, fordi API'et kun svarer browsere fra `energidataservice.dk`.
 2. **Vælg dagen.** Kun kvarterer, hvis `TimeDK` ligger på dagens dato i Danmark, tæller med.
 3. **Lav timepriser.** Timens pris er gennemsnittet af dens kvarterer, regnet om fra kr. pr. MWh til kr. pr. kWh. Mangler et kvarter, bruges gennemsnittet af resten.
 4. **Læg moms på.** Prisen med moms er prisen uden moms gange 1,25, også når prisen er negativ.
@@ -38,19 +38,20 @@ Logikken ligger i et almindeligt script, som både browseren og testene kan brug
 |---|---|
 | `index.html` | Siden med tabellen |
 | `src/prices.js` | Beregningen: adressen til API'et, dansk dato, timepriser, moms og tal på dansk. Eksporteres til Node med `module.exports` |
-| `src/app.js` | Henter priserne og tegner tabellen |
+| `src/app.js` | Læser priserne fra `data/priser.js` og tegner tabellen |
 | `src/styles.css` | Lyst og mørkt tema og tabellen på telefonbredde |
 | `test/prices.test.js` | 16 tests med `node --test` |
 | `test/data/` | Gemte svar fra API'et og deres README |
+| `tools/hent-priser.js` | Henter priserne til `data/priser.js`, som ikke committes |
 | `tools/hent-testdata.js` | Henter testdata fra API'et |
 | `docs/` | Denne beskrivelse og dens Fjord-side |
-| `.github/workflows/` | CI med `node --test` og workflowet, der starter kontorets `fletning` |
+| `.github/workflows/` | CI med `node --test`, workflowet `pages`, der henter priserne og udgiver siden hver time, og workflowet, der starter kontorets `fletning` |
 
 Scriptene er ikke ES-moduler, fordi browsere ikke indlæser moduler fra `file://`.
 
 ## 4. Test og testdata
 
-Testene henter aldrig fra nettet og kører i CI på hver PR med Node 22. De dækker timeprisen som gennemsnit af kvarterer, moms på positive og negative priser, kvarterer uden pris, dagene med sommertid og vintertid, dansk dato omkring midnat, adressen til API'et og tal med komma.
+Testene henter aldrig fra nettet og kører i CI på hver PR med Node 22. De dækker timeprisen som gennemsnit af kvarterer, moms på positive og negative priser, kvarterer uden pris, dagene med sommertid og vintertid, dansk dato omkring midnat, adressen til API'et, datafilen og tal med komma.
 
 Testdata er svar fra Energi Data Service for 25. og 27. oktober 2026, gemt uændret med den adresse, siden selv bruger. Feltnavnene `TimeUTC`, `TimeDK`, `PriceArea` og `DayAheadPriceDKK` er dermed prøvet mod et rigtigt svar, og en test tjekker felterne i hver række.
 
@@ -60,13 +61,13 @@ Skelettet er flettet som første kodeopgave, `kodeopgave-4`. Projektet er færdi
 
 | Krav | Status |
 |---|---|
-| Dagens priser for DK1 og DK2 | Lavet og prøvet mod gemte svar fra API'et |
+| Dagens priser for DK1 og DK2 | Lavet og prøvet mod gemte svar fra API'et. Hentes hver time til GitHub Pages |
 | Med og uden moms | Lavet |
 | De billigste timer markeret | Mangler |
 | Morgendagens priser, når de er offentliggjort | Mangler |
-| Test i CI | Lavet, 16 tests |
+| Test i CI | Lavet, 18 tests |
 
-Reviewet af skelettet pegede også på, at siden ikke henter igen efter midnat, og at hentningen ikke har en tidsgrænse.
+Reviewet af skelettet pegede også på, at siden ikke viser den nye dag efter midnat, før den genindlæses.
 
 ## 6. Sådan arbejdes der i repoet
 

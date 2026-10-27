@@ -10,7 +10,7 @@
   <main>
     <h1>Elpriser i dag</h1>
     <p>Spotprisen time for time i kr. pr. kWh for Vestdanmark (DK1) og Østdanmark (DK2). Timeprisen er gennemsnittet af timens fire kvarterer. Nettarif, elafgift og elselskabets tillæg er ikke med.</p>
-    <p id="status" class="status" role="status">Henter priser …</p>
+    <p id="status" class="status" role="status">Viser priser …</p>
 
     <section id="result" hidden>
       <h2 id="date"></h2>
@@ -36,6 +36,7 @@
 
     <p class="source">Data: <a href="https://www.energidataservice.dk/tso-electricity/DayAheadPrices">Day-ahead-priser fra Energi Data Service</a>, Energinet, CC BY 4.0.</p>
   </main>
+  <script src="data/priser.js"></script>
   <script src="src/prices.js"></script>
   <script src="src/app.js"></script>
 </body>

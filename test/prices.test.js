@@ -5,7 +5,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { readFileSync } = require("node:fs");
 const { join } = require("node:path");
-const { danishDate, addDays, pricesUrl, withVat, hourlyPrices, priceTable, hourLabel, formatKr } = require("../src/prices.js");
+const { danishDate, addDays, pricesUrl, withVat, hourlyPrices, priceTable, hourLabel, formatKr, priceDataScript, danishTime } = require("../src/prices.js");
 
 function load(name) {
   return JSON.parse(readFileSync(join(__dirname, "data", name), "utf8")).records;
@@ -172,4 +172,19 @@ test("timen og prisen skrives på dansk", () => {
   assert.equal(formatKr(0.5), "0,50");
   assert.equal(formatKr(-0.054), "-0,05");
   assert.equal(formatKr(-0.004), "0,00");
+});
+
+test("datafilen sætter PRICE_DATA med tidspunktet og rækkerne fra API'et", () => {
+  const script = priceDataScript(normalDay, "2026-10-27T15:07:00.000Z");
+  assert.ok(script.startsWith("window.PRICE_DATA = "));
+  const window = {};
+  new Function("window", script)(window);
+  assert.equal(window.PRICE_DATA.fetchedAt, "2026-10-27T15:07:00.000Z");
+  assert.deepEqual(window.PRICE_DATA.records, normalDay);
+  assert.equal(priceTable(window.PRICE_DATA.records, "2026-10-27").length, 24);
+});
+
+test("hentetidspunktet skrives i dansk tid", () => {
+  assert.equal(danishTime("2026-10-27T15:07:00Z"), "16.07");
+  assert.equal(danishTime("2026-07-01T15:07:00Z"), "17.07");
 });

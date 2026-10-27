@@ -1,26 +1,25 @@
-// Siden: henter dagens priser fra Energi Data Service og viser dem som en tabel. Bruger danishDate, pricesUrl,
-// priceTable og formatKr fra prices.js, som indlæses før denne fil.
+// Siden: viser dagens priser fra datafilen data/priser.js som en tabel. Energi Data Service svarer kun browsere
+// fra sine egne domæner, så filen laves af tools/hent-priser.js, på GitHub Pages hver time af en Action.
+// Bruger danishDate, priceTable, formatKr og danishTime fra prices.js, som indlæses før denne fil.
 
 const statusLine = document.getElementById("status");
 const result = document.getElementById("result");
 
-loadPrices(danishDate());
+showPrices(danishDate(), window.PRICE_DATA);
 
-async function loadPrices(date) {
-  try {
-    const response = await fetch(pricesUrl(date));
-    if (!response.ok) throw new Error(`Energi Data Service svarede ${response.status}.`);
-    const data = await response.json();
-    const rows = priceTable(Array.isArray(data.records) ? data.records : [], date);
-    if (rows.length === 0) {
-      showStatus(`Der er ingen priser for ${formatDate(date)} endnu.`);
-      return;
-    }
-    renderTable(rows, date);
-    showStatus("");
-  } catch (error) {
-    showStatus(`Priserne kunne ikke hentes. ${error.message}`, true);
+function showPrices(date, data) {
+  if (!data || !Array.isArray(data.records)) {
+    showStatus("Priserne er ikke hentet. Åbn siden på GitHub Pages, eller kør node tools/hent-priser.js i en lokal kopi.", true);
+    return;
   }
+  const fetched = data.fetchedAt ? ` Hentet kl. ${danishTime(data.fetchedAt)}.` : "";
+  const rows = priceTable(data.records, date);
+  if (rows.length === 0) {
+    showStatus(`Der er ingen priser for ${formatDate(date)} endnu.${fetched}`);
+    return;
+  }
+  renderTable(rows, date);
+  showStatus(fetched.trim());
 }
 
 function renderTable(rows, date) {
