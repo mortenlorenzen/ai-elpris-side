@@ -1,0 +1,23 @@
+# Projekt: Elpris-siden
+# Dokument: Workflow i et projekt-repo, der starter kontorets workflow fletning (ADR-33)
+# Forfatter: Claude, til godkendelse af Morten L.
+# Opdateret: 2026-10-27
+#
+# Kopieret fra skabelonens skabeloner/rigtigt-kontor/projekt-fletning.yml.
+# Når en PR lukkes, starter workflowet kontorets workflow fletning, som logger fletningen og fletter
+# opgavens log. KONTOR_TOKEN skal have adgang til at starte workflows i kontorets repo (Actions: skrive).
+name: fletning
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  kontor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start kontorets workflow fletning
+        env:
+          GH_TOKEN: ${{ secrets.KONTOR_TOKEN }}
+          KONTOR: mortenlorenzen/ai-kontor-software
+        run: gh workflow run fletning.yml -R "$KONTOR"
