@@ -1,0 +1,241 @@
+<!doctype html><html lang="da"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elpris-siden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,800;1,8..60,400&display=swap">
+<style>
+/* Fjord: fælles CSS for alle visuelle sider. Indsættes inline af docs/byg-visuals.py (fra M0).
+   Layout: hvide papirkort på blågrå bord, serif-overskrifter, én koboltaccent. */
+:root {
+  --bg: #e6ebf4; --surface: #ffffff; --ink: #0e1a33; --ink-2: #29395b;
+  --muted: #55678b; --line: #c2cce0; --line-2: #7b8caf; --accent: #2347a6;
+  --green: #2f6b3f; --amber: #9a6412; --red: #8e2424; --code-bg: #f3f6fb;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1222; --surface: #131c30; --ink: #e8edf6; --ink-2: #c4cee2;
+    --muted: #93a3c3; --line: #2a3756; --line-2: #51638a; --accent: #8ea8ee;
+    --green: #74c48b; --amber: #dcaa52; --red: #e58383; --code-bg: #0f1728;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1222; --surface: #131c30; --ink: #e8edf6; --ink-2: #c4cee2;
+  --muted: #93a3c3; --line: #2a3756; --line-2: #51638a; --accent: #8ea8ee;
+  --green: #74c48b; --amber: #dcaa52; --red: #e58383; --code-bg: #0f1728;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--sans); font-size: 16px; line-height: 1.6;
+}
+.page {
+  max-width: 1040px; margin: 0 auto;
+  padding-block: 56px 40px;
+  padding-left: max(32px, env(safe-area-inset-left, 0px));
+  padding-right: max(32px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code { font-family: var(--mono); font-size: 0.88em; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; overflow-wrap: anywhere; }
+
+/* Masthead */
+.masthead { padding-bottom: 40px; border-bottom: 1px solid var(--line-2); margin-bottom: 24px; }
+.tag {
+  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent);
+  padding: 5px 10px; border-radius: 2px;
+}
+h1 {
+  font-family: var(--serif); font-weight: 800; font-size: 80px; line-height: 1.02;
+  letter-spacing: -0.02em; margin: 24px 0 20px; text-wrap: balance;
+}
+.standfirst { font-size: 21px; line-height: 1.5; color: var(--ink-2); max-width: 62ch; margin: 0; }
+.standfirst em { font-family: var(--serif); font-style: italic; color: var(--accent); }
+
+/* Sektioner */
+section { padding-top: 56px; }
+.sec-head { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start; margin-bottom: 24px; }
+.numeral { font-family: var(--serif); font-weight: 700; font-size: 88px; line-height: 0.9; color: var(--ink); font-variant-numeric: tabular-nums; }
+.kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+h2 { font-family: var(--serif); font-weight: 700; font-size: 36px; line-height: 1.15; margin: 6px 0 10px; text-wrap: balance; }
+.lede { font-size: 17px; color: var(--ink-2); max-width: 66ch; margin: 0; }
+h3 { font-family: var(--serif); font-weight: 700; font-size: 24px; margin: 40px 0 14px; }
+p { max-width: 70ch; }
+
+/* Kort */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 22px 24px; min-width: 0; }
+.stripe-top { border-top: 4px solid var(--accent); }
+.stripe-top.muted { border-top-color: var(--line-2); }
+.stripe-left { border-left: 4px solid var(--accent); }
+.card-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.card h4 { font-family: var(--serif); font-weight: 700; font-size: 20px; margin: 6px 0 8px; line-height: 1.25; }
+.card p { margin: 0; font-size: 15px; color: var(--ink-2); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+
+/* Nummereret spørgsmålsliste */
+ol.questions { list-style: none; counter-reset: q; padding: 0; margin: 0; display: grid; gap: 12px; }
+ol.questions li { counter-increment: q; display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: baseline; }
+ol.questions li::before { content: counter(q, decimal-leading-zero); font-family: var(--serif); font-weight: 700; font-size: 28px; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* Tabeller */
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+th { background: var(--bg); text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); padding: 12px 16px; }
+td { padding: 12px 16px; border-top: 1px solid var(--line); vertical-align: top; color: var(--ink-2); }
+td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.chip { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+.chip.amber { color: var(--amber); }
+td.chip-cell { text-align: right; }
+
+/* Tidslinje */
+.timeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+.timeline .date { font-family: var(--serif); font-weight: 800; font-size: 40px; color: var(--accent); line-height: 1; }
+.timeline .when { font-family: var(--serif); font-style: italic; color: var(--ink-2); margin: 6px 0 10px; }
+
+/* Kode */
+pre {
+  background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--line-2);
+  border-radius: 4px; padding: 18px 20px; overflow-x: auto; font-family: var(--mono);
+  font-size: 12.5px; line-height: 1.55; color: var(--ink-2); margin: 0;
+}
+
+/* Figur */
+.figure { margin: 36px 0 8px; padding: 28px 24px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+.figure .fig-label { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 18px; font-family: var(--sans); }
+.figure .diagram-scroll { overflow-x: auto; }
+.figure .diagram { display: block; margin: 0 auto; width: 100%; max-width: 860px; height: auto; }
+.figure figcaption { margin: 18px auto 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13.5px; font-style: italic; font-family: var(--serif); color: var(--ink-2); text-align: center; max-width: 56ch; line-height: 1.55; }
+.diagram .node rect { fill: var(--bg); stroke: var(--ink); stroke-width: 1.5; }
+.diagram .node.hl rect { stroke: var(--accent); stroke-width: 3; }
+.diagram .node text { font-family: var(--serif); font-weight: 700; font-size: 14px; fill: var(--ink); }
+.diagram .edge { stroke: var(--ink); stroke-width: 1.5; fill: none; }
+.diagram .edge.hl { stroke: var(--accent); stroke-width: 3; }
+.diagram .elabel { font-family: var(--sans); font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase; fill: var(--muted); }
+.diagram .elabel.hl { fill: var(--accent); }
+.diagram .arrow { fill: var(--ink); }
+.diagram .arrow.hl { fill: var(--accent); }
+
+/* Fod */
+footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line-2); display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.f-label { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.f-content { font-size: 15px; color: var(--ink); }
+.f-content em { font-family: var(--serif); }
+.f-sub, .f-path { font-size: 13px; color: var(--muted); }
+.f-path { font-family: var(--mono); font-size: 12px; margin-top: 4px; }
+
+@media (max-width: 760px) {
+  .page { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 32px; }
+  h1 { font-size: 52px; overflow-wrap: break-word; hyphens: auto; }
+  .numeral { font-size: 64px; }
+  .sec-head { grid-template-columns: 1fr; gap: 4px; }
+  .grid-3, .grid-2, footer { grid-template-columns: 1fr; }
+  td:first-child { white-space: normal; }
+  table.stack thead { display: none; }
+  table.stack, table.stack tbody, table.stack tr, table.stack td { display: block; width: 100%; }
+  table.stack tr { border-top: 1px solid var(--line); padding: 10px 0; }
+  table.stack td { border-top: 0; padding: 4px 16px; }
+  table.stack td.chip-cell { text-align: left; }
+  table.stack td[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+  .figure .diagram { min-width: 640px; }
+  ol.questions li { grid-template-columns: 44px 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style></head><body>
+<div class="page">
+<header class="masthead">
+  <span class="tag">Beskrivelse af repoet ai-elpris-side · 2026-10-27</span>
+  <h1>Elpris-siden</h1>
+  <p class="standfirst">Elpris-siden er en statisk webside, der viser dagens spotpriser på el time for time for Vestdanmark (DK1) og Østdanmark (DK2) i kr. pr. kWh, med og uden moms. Priserne hentes i browseren fra Energinets Energi Data Service, og siden kan åbnes direkte fra en lokal kopi uden server, byggetrin eller afhængigheder. Repoet er projektet <code>projekt-elpris-side</code> i softwarekontoret ai-kontor-software, hvor AI-agenter skriver koden, og Morten beskriver opgaverne og fletter. Kort sagt: <em>åbn siden, og se, hvornår strømmen er billig i dag</em>.</p>
+</header>
+<section id="hvad-siden-viser">
+  <div class="sec-head"><div class="numeral">1</div><div>
+    <h2>Hvad siden viser</h2>
+    <p class="lede">Siden viser én tabel med en række pr. time og fire kolonner med priser.</p>
+  </div></div>
+<div class="table-wrap"><table class="stack">
+<thead><tr><th>Kolonne</th><th>Indhold</th></tr></thead><tbody>
+<tr><td data-label="Kolonne">Time</td><td data-label="Indhold">Timen i dansk tid, fx <code>17–18</code></td></tr>
+<tr><td data-label="Kolonne">DK1 Vest, uden og med moms</td><td data-label="Indhold">Spotprisen i Vestdanmark i kr. pr. kWh</td></tr>
+<tr><td data-label="Kolonne">DK2 Øst, uden og med moms</td><td data-label="Indhold">Spotprisen i Østdanmark i kr. pr. kWh</td></tr>
+</tbody></table></div>
+<p>Negative priser står med minus og i grønt. Nettarif, elafgift og elselskabets tillæg er ikke med, så prisen er kun selve elprisen på markedet. Er dagens priser ikke offentliggjort, eller svarer Energi Data Service ikke, står der en besked i stedet for tabellen.</p>
+</section>
+<section id="hvordan-prisen-regnes">
+  <div class="sec-head"><div class="numeral">2</div><div>
+    <h2>Hvordan prisen regnes</h2>
+    <p class="lede">Energi Data Service har siden 1. oktober 2025 givet én pris pr. kvarter i datasættet <code>DayAheadPrices</code>, og siden laver dem om til timepriser i fire trin.</p>
+  </div></div>
+<ol><li><strong>Hent.</strong> Siden henter begge prisområder fra dagen før til dagen efter, så dagen er med, uanset om API'et læser datoerne i dansk tid eller UTC.</li><li><strong>Vælg dagen.</strong> Kun kvarterer, hvis <code>TimeDK</code> ligger på dagens dato i Danmark, tæller med.</li><li><strong>Lav timepriser.</strong> Timens pris er gennemsnittet af dens kvarterer, regnet om fra kr. pr. MWh til kr. pr. kWh. Mangler et kvarter, bruges gennemsnittet af resten.</li><li><strong>Læg moms på.</strong> Prisen med moms er prisen uden moms gange 1,25, også når prisen er negativ.</li></ol>
+<p>Kvartererne samles efter timen i UTC og ikke i dansk tid. Derfor får den dag, hvor sommertiden slutter, 25 timer, og timen <code>02–03</code> står to gange som sommertid og vintertid. Den dag, sommertiden begynder, har 23 timer.</p>
+</section>
+<section id="filerne-i-repoet">
+  <div class="sec-head"><div class="numeral">3</div><div>
+    <h2>Filerne i repoet</h2>
+    <p class="lede">Logikken ligger i et almindeligt script, som både browseren og testene kan bruge.</p>
+  </div></div>
+<div class="table-wrap"><table class="stack">
+<thead><tr><th>Fil</th><th>Indhold</th></tr></thead><tbody>
+<tr><td data-label="Fil"><code>index.html</code></td><td data-label="Indhold">Siden med tabellen</td></tr>
+<tr><td data-label="Fil"><code>src/prices.js</code></td><td data-label="Indhold">Beregningen: adressen til API'et, dansk dato, timepriser, moms og tal på dansk. Eksporteres til Node med <code>module.exports</code></td></tr>
+<tr><td data-label="Fil"><code>src/app.js</code></td><td data-label="Indhold">Henter priserne og tegner tabellen</td></tr>
+<tr><td data-label="Fil"><code>src/styles.css</code></td><td data-label="Indhold">Lyst og mørkt tema og tabellen på telefonbredde</td></tr>
+<tr><td data-label="Fil"><code>test/prices.test.js</code></td><td data-label="Indhold">14 tests med <code>node --test</code></td></tr>
+<tr><td data-label="Fil"><code>test/data/</code></td><td data-label="Indhold">Syntetiske svar fra API'et og deres README</td></tr>
+<tr><td data-label="Fil"><code>tools/lav-testdata.js</code></td><td data-label="Indhold">Laver testdata med et fast seed</td></tr>
+<tr><td data-label="Fil"><code>docs/</code></td><td data-label="Indhold">Denne beskrivelse og dens Fjord-side</td></tr>
+<tr><td data-label="Fil"><code>.github/workflows/</code></td><td data-label="Indhold">CI med <code>node --test</code> og workflowet, der starter kontorets <code>fletning</code></td></tr>
+</tbody></table></div>
+<p>Scriptene er ikke ES-moduler, fordi browsere ikke indlæser moduler fra <code>file://</code>.</p>
+</section>
+<section id="test-og-testdata">
+  <div class="sec-head"><div class="numeral">4</div><div>
+    <h2>Test og testdata</h2>
+    <p class="lede">Testene henter aldrig fra nettet og kører i CI på hver PR med Node 22. De dækker timeprisen som gennemsnit af kvarterer, moms på positive og negative priser, kvarterer uden pris, dagene med sommertid og vintertid, dansk dato omkring midnat, adressen til API'et og tal med komma.</p>
+  </div></div>
+<p>Testdata er syntetiske og markeret med <code>syntetisk</code> i navn og indhold. Cloud-miljøet, hvor koden blev skrevet, har ikke adgang til Energi Data Service, så svarene er lavet ud fra dokumentationen. Feltnavnene <code>TimeUTC</code>, <code>TimeDK</code>, <code>PriceArea</code> og <code>DayAheadPriceDKK</code> stemmer med andre projekter, der bruger API'et, men er ikke prøvet mod et rigtigt svar (skøn).</p>
+</section>
+<section id="status-og-næste-skridt">
+  <div class="sec-head"><div class="numeral">5</div><div>
+    <h2>Status og næste skridt</h2>
+    <p class="lede">Skelettet er flettet som første kodeopgave, <code>kodeopgave-4</code>. Projektet er færdigt, når siden viser dagens priser for begge prisområder uden fejl, viser morgendagens, når de er offentliggjort, og testene kører i CI.</p>
+  </div></div>
+<div class="table-wrap"><table class="stack">
+<thead><tr><th>Krav</th><th>Status</th></tr></thead><tbody>
+<tr><td data-label="Krav">Dagens priser for DK1 og DK2</td><td data-label="Status">Lavet, ikke prøvet mod det rigtige API</td></tr>
+<tr><td data-label="Krav">Med og uden moms</td><td data-label="Status">Lavet</td></tr>
+<tr><td data-label="Krav">De billigste timer markeret</td><td data-label="Status">Mangler</td></tr>
+<tr><td data-label="Krav">Morgendagens priser, når de er offentliggjort</td><td data-label="Status">Mangler</td></tr>
+<tr><td data-label="Krav">Test i CI</td><td data-label="Status">Lavet, 14 tests</td></tr>
+</tbody></table></div>
+<p>Reviewet af skelettet pegede også på, at siden ikke henter igen efter midnat, og at hentningen ikke har en tidsgrænse.</p>
+</section>
+<section id="sådan-arbejdes-der-i-repoet">
+  <div class="sec-head"><div class="numeral">6</div><div>
+    <h2>Sådan arbejdes der i repoet</h2>
+    <p class="lede">Repoet følger kontorets regler i ai-kontor-software. Hver opgave giver én lille PR, som åbnes som kladde, indtil <code>reviewer-ai</code> er færdig, og som Morten fletter. Arbejdet logges i kontorets log i OCEL 2.0 med objektet <code>projekt-elpris-side</code>, og når en PR lukkes, logger kontorets workflow <code>fletning</code> fletningen. Denne beskrivelse rettes i <code>docs/elpris-siden.md</code>, og siden bygges med <code>python3 docs/byg-visuals.py</code>.</p>
+  </div></div>
+</section>
+<section id="kilder">
+  <div class="sec-head"><div class="numeral">7</div><div>
+    <h2>Kilder</h2>
+  </div></div>
+<ul><li><a href="https://www.energidataservice.dk/tso-electricity/DayAheadPrices">Day-Ahead Prices | energidataservice.dk</a></li><li><a href="https://github.com/mortenlorenzen/ai-elpris-side">ai-elpris-side</a>, særligt <code>CLAUDE.md</code> og <code>test/data/README.md</code></li><li><a href="https://github.com/mortenlorenzen/ai-kontor-software">ai-kontor-software</a>, <code>CLAUDE.md</code> og <code>KICKOFF.md</code>, afsnit 2</li></ul>
+</section>
+
+<footer>
+  <div>
+    <div class="f-label">Curated by</div>
+    <div class="f-content">
+      Claude, til godkendelse af Morten L.
+      <div class="f-sub">Elpris-siden</div>
+      <div class="f-path">elpris-siden.md · Updated 2026-10-27</div>
+    </div>
+  </div>
+</footer>
+</div>
+</body></html>

@@ -1,0 +1,143 @@
+/* Fjord: fælles CSS for alle visuelle sider. Indsættes inline af docs/byg-visuals.py (fra M0).
+   Layout: hvide papirkort på blågrå bord, serif-overskrifter, én koboltaccent. */
+:root {
+  --bg: #e6ebf4; --surface: #ffffff; --ink: #0e1a33; --ink-2: #29395b;
+  --muted: #55678b; --line: #c2cce0; --line-2: #7b8caf; --accent: #2347a6;
+  --green: #2f6b3f; --amber: #9a6412; --red: #8e2424; --code-bg: #f3f6fb;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1222; --surface: #131c30; --ink: #e8edf6; --ink-2: #c4cee2;
+    --muted: #93a3c3; --line: #2a3756; --line-2: #51638a; --accent: #8ea8ee;
+    --green: #74c48b; --amber: #dcaa52; --red: #e58383; --code-bg: #0f1728;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1222; --surface: #131c30; --ink: #e8edf6; --ink-2: #c4cee2;
+  --muted: #93a3c3; --line: #2a3756; --line-2: #51638a; --accent: #8ea8ee;
+  --green: #74c48b; --amber: #dcaa52; --red: #e58383; --code-bg: #0f1728;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--sans); font-size: 16px; line-height: 1.6;
+}
+.page {
+  max-width: 1040px; margin: 0 auto;
+  padding-block: 56px 40px;
+  padding-left: max(32px, env(safe-area-inset-left, 0px));
+  padding-right: max(32px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code { font-family: var(--mono); font-size: 0.88em; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; overflow-wrap: anywhere; }
+
+/* Masthead */
+.masthead { padding-bottom: 40px; border-bottom: 1px solid var(--line-2); margin-bottom: 24px; }
+.tag {
+  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent);
+  padding: 5px 10px; border-radius: 2px;
+}
+h1 {
+  font-family: var(--serif); font-weight: 800; font-size: 80px; line-height: 1.02;
+  letter-spacing: -0.02em; margin: 24px 0 20px; text-wrap: balance;
+}
+.standfirst { font-size: 21px; line-height: 1.5; color: var(--ink-2); max-width: 62ch; margin: 0; }
+.standfirst em { font-family: var(--serif); font-style: italic; color: var(--accent); }
+
+/* Sektioner */
+section { padding-top: 56px; }
+.sec-head { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start; margin-bottom: 24px; }
+.numeral { font-family: var(--serif); font-weight: 700; font-size: 88px; line-height: 0.9; color: var(--ink); font-variant-numeric: tabular-nums; }
+.kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+h2 { font-family: var(--serif); font-weight: 700; font-size: 36px; line-height: 1.15; margin: 6px 0 10px; text-wrap: balance; }
+.lede { font-size: 17px; color: var(--ink-2); max-width: 66ch; margin: 0; }
+h3 { font-family: var(--serif); font-weight: 700; font-size: 24px; margin: 40px 0 14px; }
+p { max-width: 70ch; }
+
+/* Kort */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 22px 24px; min-width: 0; }
+.stripe-top { border-top: 4px solid var(--accent); }
+.stripe-top.muted { border-top-color: var(--line-2); }
+.stripe-left { border-left: 4px solid var(--accent); }
+.card-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.card h4 { font-family: var(--serif); font-weight: 700; font-size: 20px; margin: 6px 0 8px; line-height: 1.25; }
+.card p { margin: 0; font-size: 15px; color: var(--ink-2); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+
+/* Nummereret spørgsmålsliste */
+ol.questions { list-style: none; counter-reset: q; padding: 0; margin: 0; display: grid; gap: 12px; }
+ol.questions li { counter-increment: q; display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: baseline; }
+ol.questions li::before { content: counter(q, decimal-leading-zero); font-family: var(--serif); font-weight: 700; font-size: 28px; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* Tabeller */
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+th { background: var(--bg); text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); padding: 12px 16px; }
+td { padding: 12px 16px; border-top: 1px solid var(--line); vertical-align: top; color: var(--ink-2); }
+td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.chip { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+.chip.amber { color: var(--amber); }
+td.chip-cell { text-align: right; }
+
+/* Tidslinje */
+.timeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+.timeline .date { font-family: var(--serif); font-weight: 800; font-size: 40px; color: var(--accent); line-height: 1; }
+.timeline .when { font-family: var(--serif); font-style: italic; color: var(--ink-2); margin: 6px 0 10px; }
+
+/* Kode */
+pre {
+  background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--line-2);
+  border-radius: 4px; padding: 18px 20px; overflow-x: auto; font-family: var(--mono);
+  font-size: 12.5px; line-height: 1.55; color: var(--ink-2); margin: 0;
+}
+
+/* Figur */
+.figure { margin: 36px 0 8px; padding: 28px 24px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+.figure .fig-label { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 18px; font-family: var(--sans); }
+.figure .diagram-scroll { overflow-x: auto; }
+.figure .diagram { display: block; margin: 0 auto; width: 100%; max-width: 860px; height: auto; }
+.figure figcaption { margin: 18px auto 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13.5px; font-style: italic; font-family: var(--serif); color: var(--ink-2); text-align: center; max-width: 56ch; line-height: 1.55; }
+.diagram .node rect { fill: var(--bg); stroke: var(--ink); stroke-width: 1.5; }
+.diagram .node.hl rect { stroke: var(--accent); stroke-width: 3; }
+.diagram .node text { font-family: var(--serif); font-weight: 700; font-size: 14px; fill: var(--ink); }
+.diagram .edge { stroke: var(--ink); stroke-width: 1.5; fill: none; }
+.diagram .edge.hl { stroke: var(--accent); stroke-width: 3; }
+.diagram .elabel { font-family: var(--sans); font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase; fill: var(--muted); }
+.diagram .elabel.hl { fill: var(--accent); }
+.diagram .arrow { fill: var(--ink); }
+.diagram .arrow.hl { fill: var(--accent); }
+
+/* Fod */
+footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line-2); display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.f-label { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.f-content { font-size: 15px; color: var(--ink); }
+.f-content em { font-family: var(--serif); }
+.f-sub, .f-path { font-size: 13px; color: var(--muted); }
+.f-path { font-family: var(--mono); font-size: 12px; margin-top: 4px; }
+
+@media (max-width: 760px) {
+  .page { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 32px; }
+  h1 { font-size: 52px; overflow-wrap: break-word; hyphens: auto; }
+  .numeral { font-size: 64px; }
+  .sec-head { grid-template-columns: 1fr; gap: 4px; }
+  .grid-3, .grid-2, footer { grid-template-columns: 1fr; }
+  td:first-child { white-space: normal; }
+  table.stack thead { display: none; }
+  table.stack, table.stack tbody, table.stack tr, table.stack td { display: block; width: 100%; }
+  table.stack tr { border-top: 1px solid var(--line); padding: 10px 0; }
+  table.stack td { border-top: 0; padding: 4px 16px; }
+  table.stack td.chip-cell { text-align: left; }
+  table.stack td[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+  .figure .diagram { min-width: 640px; }
+  ol.questions li { grid-template-columns: 44px 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
