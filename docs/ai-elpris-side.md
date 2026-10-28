@@ -2,7 +2,7 @@
 *Dokument: ai-elpris-side*\
 *Forfatter: Claude, til godkendelse af Morten L.*\
 *Opdateret: 2026-10-28*\
-*Mønster: repo-docs 2*
+*Mønster: repo-docs 3*
 
 # Elpris-siden
 
@@ -68,7 +68,7 @@ node --test                  # testene, Node 22
 node tools/hent-priser.js    # hent priserne til data/priser.js
 ```
 
-Åbn derefter `index.html` i en browser. Siden ligger også på GitHub Pages, hvor priserne hentes hver time. Fjord-udgaven af denne side bygges med `python3 docs/byg-visuals.py`.
+Åbn derefter `index.html` i en browser. Siden ligger også på GitHub Pages, hvor priserne hentes hver time. Fjord-udgaven af denne side laves i hånden i `docs/_kilde/ai-elpris-side.body.html` og bygges med `python3 docs/byg-visuals.py`.
 
 ## 5. Status / Hvor langt
 

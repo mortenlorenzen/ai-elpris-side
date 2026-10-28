@@ -1,0 +1,148 @@
+<!-- titel: Elpris-siden -->
+<div class="page">
+<header class="masthead">
+  <span class="tag">ai-elpris-side · indgang</span>
+  <h1>Elpris-siden</h1>
+  <p class="standfirst">Elpris-siden er en statisk webside, der viser dagens spotpriser på el time for time for Vestdanmark (DK1) og Østdanmark (DK2) i kr. pr. kWh, med og uden moms. Kort sagt: <em>åbn siden, og se, hvornår strømmen er billig i dag</em>.</p>
+</header>
+
+<section id="formaal">
+  <div class="sec-head"><div class="numeral">1</div><div>
+    <div class="kicker">Formål / Hvorfor</div><h2>En tabel, man kan læse på et øjeblik</h2>
+    <p class="lede">Elprisen skifter hver time, og den, der kan flytte forbruget, sparer penge ved at bruge strøm, når den er billig. Energinets Energi Data Service har priserne, men kun som rå data pr. kvarter i kr. pr. MWh. Siden gør dem til en tabel, man kan læse på et øjeblik.</p>
+  </div></div>
+  <div class="grid-3">
+    <div class="card stripe-top"><div class="card-kicker">Succes</div><p>Siden viser dagens priser for begge prisområder uden fejl, viser morgendagens, når de er offentliggjort, markerer de billigste timer, og testene kører i CI.</p></div>
+    <div class="card stripe-top"><div class="card-kicker">Bruger</div><p>Morten og andre i Danmark, der vil se dagens elpris (skøn).</p></div>
+    <div class="card stripe-top muted"><div class="card-kicker">Fravalgt</div><p>Nettarif, elafgift og elselskabets tillæg. Prisen er kun selve elprisen på markedet. Ingen persondata, kun offentlige priser.</p></div>
+  </div>
+  <p>Repoet er også et projekt, <code>projekt-elpris-side</code>, i softwarekontoret <a href="https://github.com/mortenlorenzen/ai-kontor-software">ai-kontor-software</a>. Det viser, hvordan kontoret løser en lille, afgrænset opgave fra start til slut.</p>
+</section>
+
+<section id="forstaa">
+  <div class="sec-head"><div class="numeral">2</div><div>
+    <div class="kicker">Forstå / Hvordan</div><h2>Fra kvarterpriser til timepriser i fire trin</h2>
+    <p class="lede">Markedet sætter én pris pr. kvarter, og siden laver dem om til én pris pr. time. Siden 1. oktober 2025 giver datasættet <code>DayAheadPrices</code> én pris pr. kvarter.</p>
+  </div></div>
+  <div class="grid-2">
+    <div class="card stripe-left"><div class="card-kicker">Trin 1</div><h4>Hent</h4><p><code>tools/hent-priser.js</code> henter begge prisområder fra dagen før til og med dagen efter i dansk tid og skriver dem til <code>data/priser.js</code>. Browseren må ikke selv hente dem, fordi API'et kun svarer browsere fra <code>energidataservice.dk</code>.</p></div>
+    <div class="card stripe-left"><div class="card-kicker">Trin 2</div><h4>Vælg dagen</h4><p>Kun kvarterer, hvis <code>TimeDK</code> ligger på dagens dato i Danmark, tæller med.</p></div>
+    <div class="card stripe-left"><div class="card-kicker">Trin 3</div><h4>Lav timepriser</h4><p>Timens pris er gennemsnittet af dens kvarterer, regnet om fra kr. pr. MWh til kr. pr. kWh. Mangler et kvarter, bruges gennemsnittet af resten.</p></div>
+    <div class="card stripe-left"><div class="card-kicker">Trin 4</div><h4>Læg moms på</h4><p>Prisen med moms er prisen uden moms gange 1,25, også når prisen er negativ.</p></div>
+  </div>
+  <p>Kvartererne samles efter timen i UTC og ikke i dansk tid. Den dag, sommertiden slutter, har derfor 25 timer, og timen <code>02–03</code> står to gange. Den dag, sommertiden begynder, har 23 timer.</p>
+
+  <h3>Tre principper styrer repoet</h3>
+  <div class="grid-3">
+    <div class="card stripe-top"><h4>Ingen byggetrin og ingen afhængigheder</h4><p>Siden kan åbnes direkte fra en lokal kopi, og scriptene er almindelige scripts, fordi browsere ikke indlæser ES-moduler fra <code>file://</code>.</p></div>
+    <div class="card stripe-top"><h4>Samme logik i browser og test</h4><p><code>src/prices.js</code> eksporterer til Node med <code>module.exports</code>, så testene prøver præcis den kode, siden bruger.</p></div>
+    <div class="card stripe-top"><h4>Testene henter aldrig fra nettet</h4><p>De bruger gemte svar fra API'et.</p></div>
+  </div>
+  <p>AI-agenterne i softwarekontoret skriver koden og reviewer den. Morten beskriver opgaverne og fletter.</p>
+</section>
+
+<section id="byggeklodser">
+  <div class="sec-head"><div class="numeral">3</div><div>
+    <div class="kicker">Byggeklodser / Hvad</div><h2>Én beregning, to brugere</h2>
+    <p class="lede">Siden og testene bruger den samme beregning i <code>src/prices.js</code>. Siden får priserne fra Energi Data Service hver time, og testene får gemte svar.</p>
+  </div></div>
+
+  <figure class="figure">
+    <div class="fig-label">Dataflow</div>
+    <div class="diagram-scroll"><svg class="diagram" viewBox="0 0 900 230" role="img" aria-label="Energi Data Service går via workflowet pages og data/priser.js til src/prices.js, som tegner tabellen. Gemte svar i test/data går til den samme src/prices.js, som node --test prøver">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrow" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+      <text class="elabel" x="10" y="18">siden, hver time</text>
+      <text class="elabel" x="10" y="222">testene, uden net</text>
+      <path class="edge" d="M160,52 L198,52" marker-end="url(#a)"/>
+      <path class="edge" d="M350,52 L388,52" marker-end="url(#a)"/>
+      <path class="edge" d="M540,52 L610,52 L610,90" marker-end="url(#a)"/>
+      <path class="edge" d="M160,180 L610,180 L610,142" marker-end="url(#a)"/>
+      <path class="edge" d="M680,116 L710,116 L710,52 L738,52" marker-end="url(#a)"/>
+      <path class="edge" d="M710,116 L710,180 L738,180" marker-end="url(#a)"/>
+      <g class="node"><rect x="10" y="30" width="150" height="44" rx="3"/><text x="85" y="57" text-anchor="middle">Energi Data Service</text></g>
+      <g class="node"><rect x="200" y="30" width="150" height="44" rx="3"/><text x="275" y="57" text-anchor="middle">workflowet pages</text></g>
+      <g class="node"><rect x="390" y="30" width="150" height="44" rx="3"/><text x="465" y="57" text-anchor="middle">data/priser.js</text></g>
+      <g class="node hl"><rect x="540" y="94" width="140" height="44" rx="3"/><text x="610" y="121" text-anchor="middle">src/prices.js</text></g>
+      <g class="node"><rect x="740" y="30" width="150" height="44" rx="3"/><text x="815" y="57" text-anchor="middle">tabellen på Pages</text></g>
+      <g class="node"><rect x="10" y="158" width="150" height="44" rx="3"/><text x="85" y="185" text-anchor="middle">test/data/</text></g>
+      <g class="node"><rect x="740" y="158" width="150" height="44" rx="3"/><text x="815" y="185" text-anchor="middle">node --test</text></g>
+    </svg></div>
+    <figcaption>Fordi siden og testene bruger den samme src/prices.js, prøver testene præcis den kode, siden viser priserne med.</figcaption>
+  </figure>
+
+  <h3>Software</h3>
+  <div class="table-wrap"><table class="stack">
+    <thead><tr><th>Fil</th><th>Indhold</th></tr></thead>
+    <tbody>
+      <tr><td><code>index.html</code></td><td data-label="Indhold">Siden med tabellen</td></tr>
+      <tr><td><code>src/prices.js</code></td><td data-label="Indhold">Beregningen: adressen til API'et, dansk dato, timepriser, moms og tal på dansk</td></tr>
+      <tr><td><code>src/app.js</code></td><td data-label="Indhold">Læser priserne fra <code>data/priser.js</code> og tegner tabellen</td></tr>
+      <tr><td><code>src/styles.css</code></td><td data-label="Indhold">Lyst og mørkt tema og tabellen på telefonbredde</td></tr>
+      <tr><td><code>test/prices.test.js</code></td><td data-label="Indhold">18 tests med <code>node --test</code></td></tr>
+      <tr><td><code>test/data/</code></td><td data-label="Indhold">Gemte svar fra API'et og deres <a href="../test/data/README.md">README</a></td></tr>
+      <tr><td><code>tools/hent-priser.js</code></td><td data-label="Indhold">Henter priserne til <code>data/priser.js</code>, som ikke committes</td></tr>
+      <tr><td><code>tools/hent-testdata.js</code></td><td data-label="Indhold">Henter testdata fra API'et</td></tr>
+      <tr><td><code>.github/workflows/</code></td><td data-label="Indhold">CI med <code>node --test</code>, workflowet <code>pages</code>, der henter priserne og udgiver siden hver time, og workflowet, der starter kontorets <code>fletning</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>Tabellen har en række pr. time og kolonnerne Time, DK1 Vest og DK2 Øst, hver uden og med moms. Negative priser står med minus og i grønt, og under overskriften står, hvornår priserne er hentet.</p>
+
+  <h3>Fælles kerne</h3>
+  <div class="grid-2">
+    <div class="card stripe-left"><div class="card-kicker">Fejl</div><p>Er dagens priser ikke offentliggjort, eller er priserne ikke hentet, viser siden en besked i stedet for tabellen. Er priserne hentet en anden dag, står datoen ved hentetidspunktet.</p></div>
+    <div class="card stripe-left"><div class="card-kicker">Test</div><p>Testene kører i CI på hver PR med Node 22. De dækker timepris som gennemsnit, moms på positive og negative priser, manglende kvarterer, sommertid og vintertid, dansk dato omkring midnat, adressen til API'et, datafilen og tal med komma. Testdata er svar for 25. og 27. oktober 2026, gemt uændret, og en test tjekker felterne i hver række.</p></div>
+  </div>
+</section>
+
+<section id="kom-i-gang">
+  <div class="sec-head"><div class="numeral">4</div><div>
+    <div class="kicker">Kom i gang / Brug</div><h2>To kommandoer og en browser</h2>
+  </div></div>
+<pre>node --test                  # testene, Node 22
+node tools/hent-priser.js    # hent priserne til data/priser.js</pre>
+  <p>Åbn derefter <code>index.html</code> i en browser. Siden ligger også på GitHub Pages, hvor priserne hentes hver time. Fjord-udgaven af denne side laves i hånden i <code>docs/_kilde/ai-elpris-side.body.html</code> og bygges med <code>python3 docs/byg-visuals.py</code>.</p>
+</section>
+
+<section id="status">
+  <div class="sec-head"><div class="numeral">5</div><div>
+    <div class="kicker">Status / Hvor langt</div><h2>Tre krav lavet, to mangler</h2>
+    <p class="lede">Skelettet og hentningen til GitHub Pages er flettet. To krav mangler.</p>
+  </div></div>
+  <div class="table-wrap"><table class="stack">
+    <thead><tr><th>Krav</th><th>Detalje</th><th style="text-align:right">Status</th></tr></thead>
+    <tbody>
+      <tr><td>Dagens priser for DK1 og DK2</td><td data-label="Detalje">Prøvet mod gemte svar fra API'et. Hentes hver time til GitHub Pages</td><td class="chip-cell" data-label="Status"><span class="chip">lavet</span></td></tr>
+      <tr><td>Med og uden moms</td><td data-label="Detalje">–</td><td class="chip-cell" data-label="Status"><span class="chip">lavet</span></td></tr>
+      <tr><td>Test i CI</td><td data-label="Detalje">18 tests</td><td class="chip-cell" data-label="Status"><span class="chip">lavet</span></td></tr>
+      <tr><td>De billigste timer markeret</td><td data-label="Detalje">–</td><td class="chip-cell" data-label="Status"><span class="chip amber">mangler</span></td></tr>
+      <tr><td>Morgendagens priser, når de er offentliggjort</td><td data-label="Detalje">–</td><td class="chip-cell" data-label="Status"><span class="chip amber">mangler</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>Reviewet af skelettet pegede også på, at siden ikke viser den nye dag efter midnat, før den genindlæses. Opgaver, beslutninger og fletninger logges i kontorets log i <code>ai-kontor-software</code> med objektet <code>projekt-elpris-side</code>.</p>
+</section>
+
+<section id="kilder">
+  <div class="sec-head"><div class="numeral">K</div><div>
+    <div class="kicker">Kilder</div><h2>Kilder</h2>
+  </div></div>
+  <ul>
+    <li><a href="https://www.energidataservice.dk/tso-electricity/DayAheadPrices">Day-Ahead Prices | energidataservice.dk</a></li>
+    <li>Repoets <code>CLAUDE.md</code> og <a href="../test/data/README.md">test/data/README.md</a></li>
+    <li><a href="https://github.com/mortenlorenzen/ai-kontor-software">ai-kontor-software</a>, <code>CLAUDE.md</code> og <code>KICKOFF.md</code>, afsnit 2</li>
+    <li>Den tidligere beskrivelse <code>docs/elpris-siden.md</code>, som denne indgang erstatter</li>
+  </ul>
+</section>
+
+<footer>
+  <div>
+    <div class="f-label">Curated by</div>
+    <div class="f-content">
+      Claude, til godkendelse af Morten L.
+      <div class="f-sub">Elpris-siden</div>
+      <div class="f-path">ai-elpris-side.md · Updated 2026-10-28</div>
+    </div>
+  </div>
+</footer>
+</div>
