@@ -10,8 +10,8 @@ Repoet er projektet `projekt-elpris-side` i softwarekontoret [ai-kontor-software
 ## Dokumenter
 
 - Sprog: dansk.
-- Læs indgangen `docs/ai-elpris-side.md` først. Den beskriver formål, beregning, filer og status efter skillen `repo-docs` (mønster 2), og den gentages ikke her.
-- Ret indgangen, aldrig `docs/ai-elpris-side-visual.html`, og byg siden med `python3 docs/byg-visuals.py`.
+- Læs indgangen `docs/ai-elpris-side.md` først. Den beskriver formål, beregning, filer og status efter skillen `repo-docs` (mønster 3), og den gentages ikke her.
+- Ret indgangen, aldrig `docs/ai-elpris-side-visual.html`. Siden laves i hånden efter skillen `fjord-visual`, så ret også `docs/_kilde/ai-elpris-side.body.html`, og byg siden med `python3 docs/byg-visuals.py`.
 
 ## Teknik
 
