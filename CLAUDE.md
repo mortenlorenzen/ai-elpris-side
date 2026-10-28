@@ -1,15 +1,17 @@
 *Projekt: Elpris-siden*\
 *Dokument: CLAUDE*\
 *Forfatter: Claude, til godkendelse af Morten L.*\
-*Opdateret: 2026-10-27*
+*Opdateret: 2026-10-28*
 
 # Regler for Claude i dette repo
 
 Repoet er projektet `projekt-elpris-side` i softwarekontoret [ai-kontor-software](https://github.com/mortenlorenzen/ai-kontor-software). Kontorets regler, roller og proceslog ligger dér. Oplægget står i kontorets `KICKOFF.md`, og Morten Lorenzen ejer projektet og træffer beslutningerne.
 
-## Hvad siden er
+## Dokumenter
 
-En statisk webside, der henter dagens og morgendagens spotpriser fra Energinets Energi Data Service og viser dem time for time for DK1 og DK2 i kr. pr. kWh, med og uden moms, og med de billigste timer markeret. Den er færdig, når den viser dagens priser for begge prisområder uden fejl, viser morgendagens, når de er offentliggjort, og testene kører i CI.
+- Sprog: dansk.
+- Læs indgangen `docs/ai-elpris-side.md` først. Den beskriver formål, beregning, filer og status efter skillen `repo-docs` (mønster 2), og den gentages ikke her.
+- Ret indgangen, aldrig `docs/ai-elpris-side-visual.html`, og byg siden med `python3 docs/byg-visuals.py`.
 
 ## Teknik
 
